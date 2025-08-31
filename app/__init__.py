@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_wtf.csrf import CSRFProtect
 import os
+import re
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -18,6 +19,12 @@ def create_app():
         app.config.from_object('config.ProductionConfig')
     else:
         app.config.from_object('config.DevelopmentConfig')
+    
+    # Fix for Render PostgreSQL URL
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url and database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     
     # Initialize extensions
     db.init_app(app)
@@ -34,14 +41,21 @@ def create_app():
     from app.routes.main import main_bp
     from app.routes.owner import owner_bp
     from app.routes.booking import booking_bp
+    from app.routes.health import health_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(owner_bp)
     app.register_blueprint(booking_bp)
+    app.register_blueprint(health_bp)
     
     # Create database tables
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+            print("Database tables created successfully")
+        except Exception as e:
+            print(f"Database error: {e}")
+            print("Continuing without database for now")
     
     return app

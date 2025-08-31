@@ -18,8 +18,10 @@ def start_app():
         print(f"❌ Failed to create app: {e}")
         return None
 
+# Create the app instance for Gunicorn
+app = start_app()
+
 if __name__ == '__main__':
-    app = start_app()
     if app:
         print("🎉 App is ready to run!")
     else:

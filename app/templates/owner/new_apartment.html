@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Apartment - Roomsy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus me-2"></i>Add New Apartment
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" id="apartmentForm" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Apartment Title *</label>
+                                    <input type="text" class="form-control" id="title" name="title" 
+                                           required minlength="5" maxlength="100"
+                                           placeholder="e.g., Modern Downtown Loft">
+                                    <div class="invalid-feedback">
+                                        Title is required and must be 5-100 characters.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="price_per_month" class="form-label">Monthly Rent *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="price_per_month" name="price_per_month" 
+                                               min="100" max="10000" step="0.01" required
+                                               placeholder="0.00">
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Monthly rent must be between $100 and $10,000.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" 
+                                      required minlength="20" maxlength="1000"
+                                      placeholder="Describe the apartment, amenities, location benefits..."></textarea>
+                            <div class="invalid-feedback">
+                                Description is required and must be 20-1000 characters.
+                            </div>
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    <span id="charCount">0</span>/1000 characters
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Street Address *</label>
+                                    <input type="text" class="form-control" id="address" name="address" 
+                                           required minlength="5" maxlength="200"
+                                           placeholder="e.g., 123 Main Street">
+                                    <div class="invalid-feedback">
+                                        Street address is required and must be 5-200 characters.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">City *</label>
+                                    <input type="text" class="form-control" id="city" name="city" 
+                                           required minlength="2" maxlength="100"
+                                           placeholder="e.g., New York">
+                                    <div class="invalid-feedback">
+                                        City is required and must be 2-100 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="state" class="form-label">State *</label>
+                                    <input type="text" class="form-control" id="state" name="state" 
+                                           required minlength="2" maxlength="100"
+                                           placeholder="e.g., NY">
+                                    <div class="invalid-feedback">
+                                        State is required and must be 2-100 characters.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="zip_code" class="form-label">ZIP Code *</label>
+                                    <input type="text" class="form-control" id="zip_code" name="zip_code" 
+                                           required pattern="[0-9]{5}(-[0-9]{4})?"
+                                           placeholder="e.g., 10001">
+                                    <div class="invalid-feedback">
+                                        Please enter a valid ZIP code (5 digits or 5+4 format).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="bedrooms" class="form-label">Bedrooms *</label>
+                                    <input type="number" class="form-control" id="bedrooms" name="bedrooms" 
+                                           min="0" max="10" required>
+                                    <div class="invalid-feedback">
+                                        Number of bedrooms must be between 0 and 10.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="bathrooms" class="form-label">Bathrooms *</label>
+                                    <input type="number" class="form-control" id="bathrooms" name="bathrooms" 
+                                           min="0.5" max="10" step="0.5" required>
+                                    <div class="invalid-feedback">
+                                        Number of bathrooms must be between 0.5 and 10.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="area_sqft" class="form-label">Area (sq ft) *</label>
+                                    <input type="number" class="form-control" id="area_sqft" name="area_sqft" 
+                                           min="100" max="10000" required>
+                                    <div class="invalid-feedback">
+                                        Area must be between 100 and 10,000 square feet.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="min_contract_duration" class="form-label">Minimum Contract Duration (months) *</label>
+                            <input type="number" class="form-control" id="min_contract_duration" name="min_contract_duration" 
+                                   min="1" max="60" required>
+                            <div class="invalid-feedback">
+                                Contract duration must be between 1 and 60 months.
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('owner.dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Create Apartment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('apartmentForm');
+    const description = document.getElementById('description');
+    const charCount = document.getElementById('charCount');
+    
+    // Character counter for description
+    description.addEventListener('input', function() {
+        const remaining = this.value.length;
+        charCount.textContent = remaining;
+        
+        if (remaining > 1000) {
+            charCount.classList.add('text-danger');
+        } else {
+            charCount.classList.remove('text-danger');
+        }
+    });
+    
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        if (!form.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+    
+    // Real-time validation feedback
+    form.querySelectorAll('input[required], textarea[required]').forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+    });
+    
+    // Price validation
+    const priceInput = document.getElementById('price_per_month');
+    priceInput.addEventListener('input', function() {
+        const value = parseFloat(this.value);
+        if (value < 100) {
+            this.setCustomValidity('Price must be at least $100');
+        } else if (value > 10000) {
+            this.setCustomValidity('Price cannot exceed $10,000');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+});
+</script>
+{% endblock %}

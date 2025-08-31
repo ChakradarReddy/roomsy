@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: roomsy-app
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: postgresql://roomsy_user:roomsy_password@localhost:5432/roomsy_db
+      - key: MAIL_SERVER
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: 587
+      - key: MAIL_USE_TLS
+        value: true
+      - key: MAIL_USERNAME
+        value: chakradarreddy12@gmail.com
+      - key: MAIL_EMAIL_PASSWORD
+        value: your_email_password_here
+    healthCheckPath: /
+    autoDeploy: true

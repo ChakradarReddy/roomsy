@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - Roomsy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-credit-card me-2"></i>Payment Details
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Booking Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Apartment Details</h6>
+                            <p class="mb-1"><strong>{{ booking.apartment.title }}</strong></p>
+                            <p class="text-muted mb-2">{{ booking.apartment.city }}, {{ booking.apartment.state }}</p>
+                            <p class="mb-0">
+                                <i class="fas fa-calendar me-2"></i>
+                                {{ booking.start_date.strftime('%B %d, %Y') }} - {{ booking.end_date.strftime('%B %d, %Y') }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Payment Summary</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Monthly Rent:</span>
+                                <span>${{ booking.apartment.price_per_month }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Duration:</span>
+                                <span>{{ booking.duration_months }} months</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Amount:</span>
+                                <span class="fw-bold">${{ booking.total_amount }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Deposit (20%):</span>
+                                <span class="text-primary fw-bold">${{ booking.deposit_amount }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Payment Information -->
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Payment Processing</h6>
+                        <p class="mb-2">To complete your booking, please contact our support team for payment processing:</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Email:</strong><br>
+                                <a href="mailto:chakradarreddy12@gmail.com">chakradarreddy12@gmail.com</a>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Phone:</strong><br>
+                                <a href="tel:+919866827205">+91 9866827205</a>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <strong>Contact Person:</strong> Chakradar Reddy
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Form (Simulated) -->
+                    <form method="GET" action="{{ url_for('booking.confirm_booking', booking_id=booking.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="bank_transfer" value="bank_transfer" checked>
+                                <label class="form-check-label" for="bank_transfer">
+                                    Bank Transfer
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="upi" value="upi">
+                                <label class="form-check-label" for="upi">
+                                    UPI Payment
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="cash" value="cash">
+                                <label class="form-check-label" for="cash">
+                                    Cash Payment
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="payment_reference" class="form-label">Payment Reference/Transaction ID</label>
+                            <input type="text" class="form-control" id="payment_reference" name="payment_reference" 
+                                   placeholder="Enter payment reference or leave blank for cash payment">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms_accepted" required>
+                                <label class="form-check-label" for="terms_accepted">
+                                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('main.apartment_detail', apartment_id=booking.apartment.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check me-2"></i>Confirm Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Booking Terms</h6>
+                <ul>
+                    <li>Deposit payment is required to confirm your booking</li>
+                    <li>Full payment must be completed before move-in date</li>
+                    <li>Cancellation policy applies as per the agreement</li>
+                    <li>Property inspection is recommended before finalizing</li>
+                </ul>
+                
+                <h6>Payment Terms</h6>
+                <ul>
+                    <li>20% deposit is non-refundable once booking is confirmed</li>
+                    <li>Payment methods: Bank Transfer, UPI, or Cash</li>
+                    <li>All payments are processed securely</li>
+                    <li>Receipts will be provided for all transactions</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

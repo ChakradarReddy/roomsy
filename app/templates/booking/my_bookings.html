@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookings - Roomsy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>My Bookings</h2>
+            <p class="text-muted">Track your apartment bookings and payments</p>
+        </div>
+    </div>
+    
+    {% if bookings %}
+        <div class="row">
+            {% for booking in bookings %}
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="bg-light text-center py-4 rounded">
+                                    <i class="fas fa-home fa-2x text-muted"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="card-title">{{ booking.apartment.title }}</h5>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt me-2"></i>{{ booking.apartment.address }}, {{ booking.apartment.city }}
+                                </p>
+                                <div class="row text-center mb-3">
+                                    <div class="col-4">
+                                        <small class="text-muted">
+                                            <i class="fas fa-bed me-1"></i>{{ booking.apartment.bedrooms }} BR
+                                        </small>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted">
+                                            <i class="fas fa-bath me-1"></i>{{ booking.apartment.bathrooms }} BA
+                                        </small>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted">
+                                            <i class="fas fa-ruler-combined me-1"></i>{{ booking.apartment.area_sqft }} sqft
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Duration:</strong> {{ booking.start_date.strftime('%B %d, %Y') }} - {{ booking.end_date.strftime('%B %d, %Y') }}
+                                    <span class="badge bg-info ms-2">{{ booking.duration_months }} months</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-end">
+                                    <div class="mb-2">
+                                        <span class="h5 text-primary">${{ booking.total_amount }}</span>
+                                        <div class="small text-muted">Total Amount</div>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <span class="h6 text-success">${{ booking.deposit_amount }}</span>
+                                        <div class="small text-muted">Deposit</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <span class="badge bg-{{ 'success' if booking.status == 'confirmed' else 'warning' if booking.status == 'pending' else 'secondary' }}">
+                                            {{ booking.status|title }}
+                                        </span>
+                                    </div>
+                                    
+                                    {% if booking.status == 'pending' %}
+                                        <a href="{{ url_for('booking.payment', booking_id=booking.id) }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-credit-card me-1"></i>Complete Payment
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payment Status -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="progress mb-2" style="height: 8px;">
+                                    {% set progress = 100 if booking.full_payment_paid else (50 if booking.deposit_paid else 0) %}
+                                    <div class="progress-bar bg-{{ 'success' if progress == 100 else 'warning' if progress == 50 else 'secondary' }}" 
+                                         style="width: {{ progress }}%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>Deposit: {{ 'Paid' if booking.deposit_paid else 'Pending' }}</span>
+                                    <span>Full Payment: {{ 'Paid' if booking.full_payment_paid else 'Pending' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+            <h5>No bookings yet</h5>
+            <p class="text-muted">Start exploring apartments and make your first booking!</p>
+            <a href="{{ url_for('main.index') }}" class="btn btn-primary">Browse Apartments</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

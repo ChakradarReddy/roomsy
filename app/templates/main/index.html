@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Roomsy - Find Your Perfect Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold mb-4">Find Your Perfect Home</h1>
+                <p class="lead mb-4">Discover amazing apartments and rooms in your favorite locations. Book with confidence and start your journey to a new home.</p>
+                
+                <!-- Search Form -->
+                <form action="{{ url_for('main.search') }}" method="GET" class="row g-3 justify-content-center">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control form-control-lg" name="q" placeholder="Search apartments...">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control form-control-lg" name="city" placeholder="City">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Apartments -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="text-center mb-4">Featured Apartments</h2>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for apartment in apartments.items %}
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-img-top bg-light text-center py-5">
+                        <i class="fas fa-home fa-3x text-muted"></i>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ apartment.title }}</h5>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ apartment.city }}, {{ apartment.state }}
+                        </p>
+                        <p class="card-text flex-grow-1">{{ apartment.description[:100] }}{% if apartment.description|length > 100 %}...{% endif %}</p>
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <small class="text-muted">
+                                    <i class="fas fa-bed me-1"></i>{{ apartment.bedrooms }} BR
+                                </small>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">
+                                    <i class="fas fa-bath me-1"></i>{{ apartment.bathrooms }} BA
+                                </small>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">
+                                    <i class="fas fa-ruler-combined me-1"></i>{{ apartment.area_sqft }} sqft
+                                </small>
+                            </div>
+                        </div>
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 text-primary mb-0">${{ apartment.price_per_month }}/month</span>
+                                <a href="{{ url_for('main.apartment_detail', apartment_id=apartment.id) }}" class="btn btn-outline-primary btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if apartments.pages > 1 %}
+        <nav aria-label="Apartment pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if apartments.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('main.index', page=apartments.prev_num) }}">Previous</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in apartments.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != apartments.page %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('main.index', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if apartments.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('main.index', page=apartments.next_num) }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-search fa-3x text-primary"></i>
+                </div>
+                <h4>Easy Search</h4>
+                <p class="text-muted">Find apartments that match your criteria with our advanced search filters.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-credit-card fa-3x text-primary"></i>
+                </div>
+                <h4>Secure Booking</h4>
+                <p class="text-muted">Book with confidence using our secure payment system and deposit protection.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-headset fa-3x text-primary"></i>
+                </div>
+                <h4>24/7 Support</h4>
+                <p class="text-muted">Get help whenever you need it with our dedicated customer support team.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

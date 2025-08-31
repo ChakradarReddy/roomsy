@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Search Apartments - Roomsy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Search Filters -->
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Search Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('main.search') }}">
+                        <div class="mb-3">
+                            <label for="q" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="q" name="q" value="{{ query }}" placeholder="Keywords...">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" class="form-control" id="city" name="city" value="{{ city }}" placeholder="City name...">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="min_price" class="form-label">Min Price</label>
+                            <input type="number" class="form-control" id="min_price" name="min_price" value="{{ min_price }}" placeholder="0">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="max_price" class="form-label">Max Price</label>
+                            <input type="text" class="form-control" id="max_price" name="max_price" value="{{ max_price }}" placeholder="5000">
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search Results -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>Search Results</h4>
+                <span class="text-muted">{{ apartments|length }} apartments found</span>
+            </div>
+            
+            {% if apartments %}
+                <div class="row">
+                    {% for apartment in apartments %}
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-img-top bg-light text-center py-4">
+                                <i class="fas fa-home fa-3x text-muted"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ apartment.title }}</h5>
+                                <p class="card-text text-muted">
+                                    <i class="fas fa-map-marker-alt me-2"></i>{{ apartment.city }}, {{ apartment.state }}
+                                </p>
+                                <p class="card-text">{{ apartment.description[:100] }}...</p>
+                                <div class="row text-center mb-3">
+                                    <div class="col-4">
+                                        <small class="text-muted">
+                                            <i class="fas fa-bed me-1"></i>{{ apartment.bedrooms }} BR
+                                        </small>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted">
+                                            <i class="fas fa-bath me-1"></i>{{ apartment.bathrooms }} BA
+                                        </small>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted">
+                                            <i class="fas fa-ruler-combined me-1"></i>{{ apartment.area_sqft }} sqft
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 text-primary mb-0">${{ apartment.price_per_month }}/month</span>
+                                    <a href="{{ url_for('main.apartment_detail', apartment_id=apartment.id) }}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>No apartments found</h5>
+                    <p class="text-muted">Try adjusting your search criteria or browse all available apartments.</p>
+                    <a href="{{ url_for('main.index') }}" class="btn btn-primary">Browse All Apartments</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -5,7 +5,7 @@ Supports multiple PostgreSQL drivers and fallback to SQLite
 
 import os
 from sqlalchemy import create_engine, text
-from sqlalchemy.exc import OperationalError, ImportError
+from sqlalchemy.exc import OperationalError
 
 def get_database_url():
     """

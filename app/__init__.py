@@ -19,9 +19,15 @@ def create_app():
     else:
         app.config.from_object('config.DevelopmentConfig')
     
-    # Use custom database handler
-    from app.database import get_database_url
-    app.config['SQLALCHEMY_DATABASE_URI'] = get_database_url()
+    # Handle database URL
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url and database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+        print(f"✅ Using PostgreSQL: {database_url[:20]}...")
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///roomsy.db'
+        print("✅ Using SQLite fallback")
     
     # Initialize extensions
     db.init_app(app)

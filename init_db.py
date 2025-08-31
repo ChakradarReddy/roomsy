@@ -5,23 +5,23 @@ Handles database setup with error handling
 """
 
 import os
-import sys
 from app import create_app, db
 
 def init_database():
     """Initialize database with error handling"""
     try:
+        print("🚀 Starting Roomsy app initialization...")
         app = create_app()
         
         with app.app_context():
-            print("Creating database tables...")
+            print("📊 Creating database tables...")
             db.create_all()
             print("✅ Database tables created successfully!")
             
             # Try to create sample data
             try:
                 from sample_data import create_sample_data
-                print("Creating sample data...")
+                print("📝 Creating sample data...")
                 create_sample_data()
                 print("✅ Sample data created successfully!")
             except Exception as e:
